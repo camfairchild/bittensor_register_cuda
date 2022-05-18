@@ -84,7 +84,7 @@ __device__ bool seal_meets_difficulty(BYTE* seal, uint256 limit) {
 
 __device__ void create_nonce_bytes(uint64 nonce, BYTE* nonce_bytes) {
     // Convert nonce to bytes (little endian) and store at start of pre_seal;
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 5; i++) {
         nonce_bytes[i] = (nonce >> (i * 8)) & 0xFF;
     }
 }
@@ -169,11 +169,18 @@ __global__ void solve(BYTE** seals, uint64* solution, uint64 nonce_start, uint64
                             return;
                         }
                         found = true;
-                        //for (int k = 0; k < 32; k++) {
+                        for (int k = 0; k < 32; k++) {
                             // print the seal
-                            //printf("%02x ", seal[k]);
-                        //}
-                        //printf("found nonce %llu \n", j);
+                            printf("%02x", seal[k]);
+                        }
+                        printf("; i: %d, j: %llu \n", i, j);
+                        BYTE pre_seal[40];  
+                        create_pre_seal(pre_seal, block_bytes, j);
+                        // print pre_seal
+                        for (int k = 0; k < 40; k++) {
+                            printf("%02x", pre_seal[k]);
+                        }
+                        printf("\n");
                         return;
                     }
                 }
